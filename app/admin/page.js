@@ -1,3 +1,4 @@
+import ShopQr from "@/components/ShopQr";
 import Link from "next/link";
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
@@ -28,6 +29,7 @@ export default async function AdminHomePage() {
       .maybeSingle();
     tax = data;
   }
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   return (
     <main className="min-h-screen bg-gray-50 p-4 sm:p-8">
@@ -43,7 +45,13 @@ export default async function AdminHomePage() {
         {business ? (
           <div className="space-y-2 rounded-xl bg-gray-50 p-4 text-gray-800">
             <p className="text-lg font-semibold">{business.name}</p>
-            <p className="text-sm text-gray-600">Shop link: /shop/{business.slug}</p>
+            {/* <p className="text-sm text-gray-600">Shop link: /shop/{business.slug}</p> */}
+            <div className="pt-2">
+  <ShopQr
+    url={`${siteUrl}/shop/${business.slug}`}
+    businessName={business.name}
+  />
+</div>
             <p className="text-sm text-gray-600">Country: {business.country_code}</p>
             {business.address && (
               <p className="text-sm text-gray-600">Address: {business.address}</p>
