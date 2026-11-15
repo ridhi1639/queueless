@@ -1,12 +1,12 @@
-import ShopQr from "@/components/ShopQr";
 import Link from "next/link";
-import { connection } from "next/server";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import LogoutButton from "@/components/LogoutButton";
+import ShopQr from "@/components/ShopQr";
 
 export default async function AdminHomePage() {
-    await connection();
+  await connection();
   const supabase = await createClient();
 
   const {
@@ -29,6 +29,7 @@ export default async function AdminHomePage() {
       .maybeSingle();
     tax = data;
   }
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   return (
@@ -43,26 +44,34 @@ export default async function AdminHomePage() {
         </div>
 
         {business ? (
-          <div className="space-y-2 rounded-xl bg-gray-50 p-4 text-gray-800">
-            <p className="text-lg font-semibold">{business.name}</p>
-            {/* <p className="text-sm text-gray-600">Shop link: /shop/{business.slug}</p> */}
-            <div className="pt-2">
-  <ShopQr
-    url={`${siteUrl}/shop/${business.slug}`}
-    businessName={business.name}
-  />
-</div>
-            <p className="text-sm text-gray-600">Country: {business.country_code}</p>
-            {business.address && (
-              <p className="text-sm text-gray-600">Address: {business.address}</p>
-            )}
-            {tax && (
-              <p className="text-sm text-gray-600">
-                Tax: {tax.tax_name} (
-                {tax.components.map((c) => `${c.name} ${c.rate}%`).join(" + ")}),{" "}
-                {tax.prices_include_tax ? "prices include tax" : "tax added on top"}
-              </p>
-            )}
+          <div className="space-y-4">
+            <div className="space-y-2 rounded-xl bg-gray-50 p-4 text-gray-800">
+              <p className="text-lg font-semibold">{business.name}</p>
+              <p className="text-sm text-gray-600">Country: {business.country_code}</p>
+              {business.address && (
+                <p className="text-sm text-gray-600">Address: {business.address}</p>
+              )}
+              {tax && (
+                <p className="text-sm text-gray-600">
+                  Tax: {tax.tax_name} (
+                  {tax.components.map((c) => `${c.name} ${c.rate}%`).join(" + ")}),{" "}
+                  {tax.prices_include_tax ? "prices include tax" : "tax added on top"}
+                </p>
+              )}
+              <div className="pt-2">
+                <ShopQr
+                  url={`${siteUrl}/shop/${business.slug}`}
+                  businessName={business.name}
+                />
+              </div>
+            </div>
+
+            <Link
+              href="/admin/menu"
+              className="inline-block rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white"
+            >
+              Manage menu
+            </Link>
           </div>
         ) : (
           <div className="rounded-xl bg-indigo-50 p-4">
